@@ -10,13 +10,13 @@ import javax.swing.JButton;
 
 public abstract class CalculatorButton extends JButton {
 
-	protected CalculatorChip calculatorChip;
+	protected CalculatorChip chip;
 	private Color foreground;
 	private Color background;
 	
 	public CalculatorButton(String text, CalculatorChip calculatorChip){
 		this.setText(text);
-		this.calculatorChip = calculatorChip;
+		this.chip = calculatorChip;
 		this.setBackground(background);
 		this.setForeground(foreground);
 		this.setOpaque(true);

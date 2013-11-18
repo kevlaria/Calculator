@@ -2,7 +2,7 @@
  * Container hierarchy (by method name):
  * 
  * createJFrame
- * 		- createOutputPanel
+ * 		- createDisplayPanel
  * 		- createMainBodyPanel
  * 			- createClearButtonPanel
  * 				- CLEAR button
@@ -43,30 +43,26 @@ import javax.swing.JTextField;
 public class Calculator extends JFrame{
 
 	private JFrame frame;
-	private JButton button;
-	private JTextField output;
-	private CalculatorChip calculatorChip;
+	private JTextField display;
+	private CalculatorChip chip;
+	private String displayText;
 	
-	public Calculator(){};
+	public Calculator(){
+		this.chip = new CalculatorChip();
+		this.displayText = "";
+	}
 	
 	public static void main(String[] args){
 		new Calculator().createGui();
-		CalculatorChip calculatorChip = new CalculatorChip();
-	}
+	}	
 	
-	
-	public void createGui(){
-		
-		frame = createJFrame("Calculator"); // Frame for everything
-		
-		JPanel outputPanel = this.createOutputPanel(); 	// The display
+	public void createGui(){		
+		frame = createJFrame("Calculator"); // Frame for everything	
+		JPanel outputPanel = this.createDisplayPanel(); 	// The display
 		frame.add(outputPanel, BorderLayout.NORTH);
-
 		JPanel mainBody = this.createMainBodyPanel(); // Container for all the buttons
-		frame.add(mainBody, BorderLayout.CENTER);
-		
+		frame.add(mainBody, BorderLayout.CENTER);	
 		frame.setVisible(true);
-
 	}
 	
 	
@@ -81,22 +77,21 @@ public class Calculator extends JFrame{
 		frame.setMinimumSize(new Dimension(280,400));
 		frame.setResizable(false);	
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		return frame;
-		
+		return frame;		
 	}
 	
 	/**
-	 * Creates the display panel (where the output is displayed)
+	 * Creates the display panel, including the textField (where the output is displayed)
 	 * @return the display panel
 	 */
-	public JPanel createOutputPanel(){
+	public JPanel createDisplayPanel(){
 		JPanel panel = this.createBorderLayoutPanel();
 		panel.setBorder(BorderFactory.createBevelBorder(4));
 		
-		output = new JTextField(9);
-		output.setFont(new Font("San Serif", Font.BOLD, 30));
-		
-		panel.add(output);
+		display = new JTextField(9);
+		display.setFont(new Font("San Serif", Font.BOLD, 30));
+		display.setText(this.displayText);
+		panel.add(display);
 		
 		return panel;
 	}
@@ -274,7 +269,7 @@ public class Calculator extends JFrame{
 	 * @return NumberButtons
 	 */
 	public NumberButtons createNumberButtons(String text){
-		NumberButtons button = new NumberButtons(text, calculatorChip);
+		NumberButtons button = new NumberButtons(text, chip);
 		button.addActionListener(new NumberButtonListener(button));
 		return button;
 	}
@@ -285,7 +280,7 @@ public class Calculator extends JFrame{
 	 * @return OperationButtons
 	 */
 	public OperationsButton createOperationButtons(String text){
-		OperationsButton button = new OperationsButton(text, calculatorChip);
+		OperationsButton button = new OperationsButton(text, chip);
 		button.addActionListener(new OperationButtonListener(button));
 		return button;
 	}
@@ -297,7 +292,7 @@ public class Calculator extends JFrame{
 	 * @return EqualsButton
 	 */
 	public EqualsButton createEqualsButtons(String text){
-		EqualsButton button = new EqualsButton(text, calculatorChip);
+		EqualsButton button = new EqualsButton(text, chip);
 		button.addActionListener(new OperationButtonListener(button));
 		return button;
 	}
@@ -308,7 +303,7 @@ public class Calculator extends JFrame{
 	 * @return ClearButton
 	 */
 	public ClearButton createClearButtons(String text){
-		ClearButton button = new ClearButton(text, calculatorChip);
+		ClearButton button = new ClearButton(text, chip);
 		button.addActionListener(new OperationButtonListener(button));
 		return button;
 	}
@@ -319,37 +314,12 @@ public class Calculator extends JFrame{
 	 * @return MemoryButton
 	 */
 	public MemoryButtons createMemoryButtons(String text){
-		MemoryButtons button = new MemoryButtons(text, calculatorChip);
+		MemoryButtons button = new MemoryButtons(text, chip);
 		button.addActionListener(new OperationButtonListener(button));
 		return button;
 	}
 
-	/*******
-	 * ActionListener methods
-	 * **********
-	 */
-	
-	class NumberButtonListener implements ActionListener{	
-		CalculatorButton button;		
-		public NumberButtonListener(CalculatorButton button){
-			this.button = button;
-		}		
-		@Override
-		public void actionPerformed(ActionEvent e){
-			button.onClick(e);
-		}
-	}
-	
-	class OperationButtonListener implements ActionListener{	
-		CalculatorButton button;		
-		public OperationButtonListener(CalculatorButton button){
-			this.button = button;
-		}		
-		@Override
-		public void actionPerformed(ActionEvent e){
-			button.onClick(e);
-		}
-	}
+
 	
 	/*******
 	 * Panel creation methods
@@ -376,6 +346,35 @@ public class Calculator extends JFrame{
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		return panel;
+	}
+	
+	
+	/*******
+	 * ActionListener methods
+	 * **********
+	 */
+	
+	class NumberButtonListener implements ActionListener{	
+		CalculatorButton button;		
+		public NumberButtonListener(CalculatorButton button){
+			this.button = button;
+		}		
+		@Override
+		public void actionPerformed(ActionEvent e){
+			displayText = displayText + button.onClick(e);
+			display.setText(displayText);
+		}
+	}
+	
+	class OperationButtonListener implements ActionListener{	
+		CalculatorButton button;		
+		public OperationButtonListener(CalculatorButton button){
+			this.button = button;
+		}		
+		@Override
+		public void actionPerformed(ActionEvent e){
+			button.onClick(e);
+		}
 	}
 	
 }
