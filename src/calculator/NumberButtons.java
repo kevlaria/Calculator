@@ -18,9 +18,27 @@ public class NumberButtons extends CalculatorButton{
 	@Override
 	public String onClick(ActionEvent e) {
 		String command = e.getActionCommand();
-		int digit = Integer.parseInt(command);
-		String output = chip.digit(digit);
-		return output;
+		
+		// Three types of potential inputs: 0-9, . or +/-
+		
+		try {			
+			int digit = Integer.parseInt(command);
+			String output = chip.digit(digit);
+			return output;
+		} catch (NumberFormatException ex){
+			if (command.equals(".")){
+				String output = chip.decimalPoint();
+				return output;
+			} else if (command.equals("+/-")){
+				String output = chip.changeSign();
+				return output;
+			} else {
+				throw new RuntimeException("Unknown NumberButton input");
+			}
+			
+		}
+		
+		//TODO - handle +/- and .
 	}
 	
 	

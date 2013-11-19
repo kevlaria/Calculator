@@ -45,7 +45,7 @@ public class Calculator extends JFrame{
 	private JFrame frame;
 	private JTextField display;
 	private CalculatorChip chip;
-	private String displayText;
+	private String displayText; // The text that's to be displayed on the display
 	
 	public Calculator(){
 		this.chip = new CalculatorChip();
@@ -90,6 +90,7 @@ public class Calculator extends JFrame{
 		
 		display = new JTextField(9);
 		display.setFont(new Font("San Serif", Font.BOLD, 30));
+		displayText = chip.getOutput();   // The text that's to be displayed on the display
 		display.setText(this.displayText);
 		panel.add(display);
 		
@@ -361,7 +362,7 @@ public class Calculator extends JFrame{
 		}		
 		@Override
 		public void actionPerformed(ActionEvent e){
-			displayText = displayText + button.onClick(e);
+			displayText = button.onClick(e);
 			display.setText(displayText);
 		}
 	}
