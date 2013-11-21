@@ -83,7 +83,7 @@ public class Calculator extends JFrame{
 	public JFrame createJFrame(String title){
 		frame = new JFrame(title);
 		frame.setLayout(new BorderLayout());
-		frame.setMinimumSize(new Dimension(280,400));
+		frame.setMinimumSize(new Dimension(270,398));
 		frame.setResizable(false);	
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		return frame;		
@@ -128,6 +128,7 @@ public class Calculator extends JFrame{
 		JPanel panel = this.createBorderLayoutPanel();
 		clearButton = this.createClearButtons("AC");
 		panel.add(clearButton, BorderLayout.EAST);
+
 		return panel;
 	}
 	

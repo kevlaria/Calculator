@@ -78,7 +78,8 @@ public class CalculatorChip {
 		this.output = "0";
 		this.variableA = "";
 		this.allClear = true;
-		if (this.lastButtonPressed.equals("Equals")){ // If the last button pressed was "=", clear out everything like an all clear
+		if (this.lastButtonPressed.equals("Equals") || (this.lastButtonPressed.equals("UnaryOperation")) ){ 
+			// If the last button pressed was "=", "sqrt", "%" or "1/x", clear out everything like an all clear
 			this.variableB = "";
 			this.operand = "";
 		}
@@ -512,7 +513,7 @@ public class CalculatorChip {
 		}
 		
 		this.allClear = false;
-		this.lastButtonPressed = "Operation";
+		this.lastButtonPressed = "UnaryOperation";
 	}
 	
 
@@ -534,7 +535,7 @@ public class CalculatorChip {
 		//TODO REMOVE
 		this.printStatusBefore();
 		
-		if (this.operand.equals("sqrt")){
+		if (this.lastButtonPressed.equals("UnaryOperation")){
 			this.lastButtonPressed = "Equals";
 			try {
 				if (this.variableB.equals("")){
@@ -584,7 +585,7 @@ public class CalculatorChip {
 			}
 		} 
 		
-		else if (this.lastButtonPressed.equals("Operation") || this.lastButtonPressed.equals("Equals")){
+		else if (this.lastButtonPressed.equals("Operation") ||  this.lastButtonPressed.equals("UnaryOperation") || this.lastButtonPressed.equals("Equals")){
 			
 			this.lastButtonPressed = "Equals";
 			
@@ -598,8 +599,15 @@ public class CalculatorChip {
 
 				
 			} else if (!this.variableA.equals("") && !this.variableB.equals("")){
-				// eg 2, -, =, =
-				this.performBinaryCalculation(this.operand);
+				
+				if (this.lastButtonPressed.equals("Operation")){
+					// eg 2, -, =, =
+					
+					this.performBinaryCalculation(this.operand);
+					
+				} else {
+					this.performUniaryCalculations(this.operand);
+				}
 								
 			} else {
 				// Do nothing
@@ -612,6 +620,50 @@ public class CalculatorChip {
 
 		
 
+		return this.output;
+	}
+	
+	/*******
+	 * MemoryButton methods: MC, MR, M+, M-
+	 * **********
+	 */
+	
+	public String memClear(){
+		this.memory = "0";
+		this.memoryUsed = false;
+		this.lastButtonPressed = "Memory";
+		return this.output;
+	}
+	
+	public String memRead(){
+		this.output = this.memory;
+		this.variableA = this.memory;
+		this.lastButtonPressed = "Memory";
+		return this.output;
+	}
+	
+	public String memPlus(){
+		this.memoryUsed = true;
+		if (this.lastButtonPressed.equals("Equals")){
+			this.memory = this.add(this.memory,this.variableB);	// Equals stores results in variableB		
+		} else {
+			
+			if (this.variableA.equals("")){this.variableA = "0";}
+			
+			this.memory = this.add(this.memory,this.variableA);
+		}
+		this.lastButtonPressed = "Memory";
+		return this.output;
+	}
+	
+	public String memMinus(){
+		this.memoryUsed = true;
+		if (this.lastButtonPressed.equals("Equals")){			
+			this.memory = this.subtract(this.memory,this.variableB);	// Equals stores results in variableB		
+		} else {
+			this.memory = this.subtract(this.memory,this.variableA);
+		}
+		this.lastButtonPressed = "Memory";
 		return this.output;
 	}
 		
@@ -759,49 +811,7 @@ public class CalculatorChip {
 		return input;
 	}
 	
-	/*******
-	 * MemoryButton methods
-	 * **********
-	 */
 	
-	public String memClear(){
-		this.memory = "0";
-		this.memoryUsed = false;
-		this.lastButtonPressed = "Memory";
-		return this.output;
-	}
-	
-	public String memRead(){
-		this.output = this.memory;
-		this.variableA = this.memory;
-		this.lastButtonPressed = "Memory";
-		return this.output;
-	}
-	
-	public String memPlus(){
-		this.memoryUsed = true;
-		if (this.lastButtonPressed.equals("Equals")){
-			this.memory = this.add(this.memory,this.variableB);	// Equals stores results in variableB		
-		} else {
-			
-			if (this.variableA.equals("")){this.variableA = "0";}
-			
-			this.memory = this.add(this.memory,this.variableA);
-		}
-		this.lastButtonPressed = "Memory";
-		return this.output;
-	}
-	
-	public String memMinus(){
-		this.memoryUsed = true;
-		if (this.lastButtonPressed.equals("Equals")){			
-			this.memory = this.subtract(this.memory,this.variableB);	// Equals stores results in variableB		
-		} else {
-			this.memory = this.subtract(this.memory,this.variableA);
-		}
-		this.lastButtonPressed = "Memory";
-		return this.output;
-	}
 	
 	/*******
 	 * Getter and setter methods
