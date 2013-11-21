@@ -11,7 +11,7 @@ public class NumberButtons extends CalculatorButton{
 
 	public NumberButtons(String text, CalculatorChip chip) {
 		super(text, chip);
-		this.setBackground(Color.GREEN);
+		this.setBackground(Color.CYAN);
 		this.setForeground(Color.BLACK);
 	}
 	

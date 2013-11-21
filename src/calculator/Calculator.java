@@ -28,17 +28,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+
 
 public class Calculator extends JFrame{
 
@@ -46,6 +44,9 @@ public class Calculator extends JFrame{
 	private JTextField display;
 	private CalculatorChip chip;
 	private String displayText; // The text that's to be displayed on the display
+	private ClearButton clearButton;
+	private MemoryButtons memReadButton; 
+
 	
 	public Calculator(){
 		this.chip = new CalculatorChip();
@@ -53,10 +54,18 @@ public class Calculator extends JFrame{
 	}
 	
 	public static void main(String[] args){
+
 		new Calculator().createGui();
 	}	
 	
-	public void createGui(){		
+	public void createGui(){
+//		try { 
+//			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel"); 
+//			} 
+//			catch (Exception e) { 
+//			e.printStackTrace(); 
+//			} 
+		
 		frame = createJFrame("Calculator"); // Frame for everything	
 		JPanel outputPanel = this.createDisplayPanel(); 	// The display
 		frame.add(outputPanel, BorderLayout.NORTH);
@@ -117,8 +126,8 @@ public class Calculator extends JFrame{
 	 */
 	public JPanel createClearButtonPanel(){
 		JPanel panel = this.createBorderLayoutPanel();
-		ClearButton clear = this.createClearButtons("AC");
-		panel.add(clear, BorderLayout.EAST);
+		clearButton = this.createClearButtons("AC");
+		panel.add(clearButton, BorderLayout.EAST);
 		return panel;
 	}
 	
@@ -180,11 +189,11 @@ public class Calculator extends JFrame{
 	public JPanel createMemoryButtonPanel(){
 		JPanel panel = this.createFlowLayoutPanel();
 		MemoryButtons mc = this.createMemoryButtons("MC");
-		MemoryButtons mr = this.createMemoryButtons("MR");
+		memReadButton = this.createMemoryButtons("MR"); // special as may change colour depending on state of chip.memoryUsed
 		MemoryButtons mPlus = this.createMemoryButtons("M+");
 		MemoryButtons mMinus = this.createMemoryButtons("M-");
 		panel.add(mc);
-		panel.add(mr);
+		panel.add(memReadButton);
 		panel.add(mPlus);
 		panel.add(mMinus);
 		return panel;
@@ -263,6 +272,27 @@ public class Calculator extends JFrame{
 		return numbersPanel;
 	}
 	
+	/**
+	 * Sets the text on the clear button
+	 */
+	public void setClearButtonText(){
+		if(chip.getAllClear()){
+			clearButton.setText("AC");
+		} else {
+			clearButton.setText("C");
+		}
+	}
+	
+	/**
+	 * Sets the colour on the MemRead button
+	 */
+	public void setMemReadButtonColour(){
+		if(chip.getMemoryState()){
+			memReadButton.setNewBackground(Color.RED);
+		} else {
+			memReadButton.setNewBackground(Color.ORANGE);
+		}
+	}
 	
 	/**
 	 * Method to create NumberButtons (with ActionEvents)
@@ -321,7 +351,6 @@ public class Calculator extends JFrame{
 	}
 
 
-	
 	/*******
 	 * Panel creation methods
 	 * **********
@@ -364,6 +393,8 @@ public class Calculator extends JFrame{
 		public void actionPerformed(ActionEvent e){
 			displayText = button.onClick(e);
 			display.setText(displayText);
+			setClearButtonText();
+			setMemReadButtonColour();
 		}
 	}
 	
@@ -374,7 +405,10 @@ public class Calculator extends JFrame{
 		}		
 		@Override
 		public void actionPerformed(ActionEvent e){
-			button.onClick(e);
+			displayText = button.onClick(e);
+			display.setText(displayText);
+			setClearButtonText();
+			setMemReadButtonColour();
 		}
 	}
 	

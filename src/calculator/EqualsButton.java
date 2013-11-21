@@ -18,8 +18,8 @@ public class EqualsButton extends CalculatorButton{
 
 	@Override
 	public String onClick(ActionEvent e) {
-		// TODO Auto-generated method stub
-		return null;
+		String output = chip.equals();
+		return output;
 	}
 	
 }
