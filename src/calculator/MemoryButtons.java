@@ -1,3 +1,4 @@
+// Kevin Lee, Lin Hong
 package calculator;
 
 import java.awt.Color;
@@ -5,10 +6,12 @@ import java.awt.event.ActionEvent;
 
 public class MemoryButtons extends CalculatorButton{
 
+	private Color orange = new Color(255,225,147);
+	
 	public MemoryButtons(String text, CalculatorChip calculatorChip) {
 		super(text, calculatorChip);
 
-		this.setBackground(Color.ORANGE);
+		this.setBackground(orange);
 		this.setForeground(Color.BLACK);
 	}
 	

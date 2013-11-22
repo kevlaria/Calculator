@@ -1,5 +1,7 @@
+// Kevin Lee, Lin Hong
+
 /***
- * Container hierarchy (by method name):
+* Container hierarchy (by method name):
  * 
  * createJFrame
  * 		- createDisplayPanel
@@ -9,14 +11,10 @@
  * 			- createMainButtonsPanel
  * 				- createOperationButtonPanelSQRT
  * 					- SQRT, %, 1/x, = buttons
- * 				- createOtherButtonsPanel
- * 					- createMemoryButtonPanel
+ * 				- createOtherButtonsGridPanel
  * 						- MC, MR, M+, M- buttons
- * 					- createNumberAndOperationsPanel
- * 						- createOpetaionButtonPanelDIVIDE
- * 							- Ö, x, -, + buttons
- * 						- createNumbersPanel
- * 							- 0-9, '.' and '+/-' buttons
+ * 						- Ö, x, -, + buttons
+ * 						- 0-9, '.' and '+/-' buttons
  * 
  */
 
@@ -26,8 +24,8 @@ package calculator;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -35,7 +33,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 
 
 public class Calculator extends JFrame{
@@ -46,6 +44,10 @@ public class Calculator extends JFrame{
 	private String displayText; // The text that's to be displayed on the display
 	private ClearButton clearButton;
 	private MemoryButtons memReadButton; 
+	
+	private Color orange = new Color(255,225,147);
+	private Color red = new Color(245,116,62);
+	private Color cyan = new Color(222,252,255);
 
 	
 	public Calculator(){
@@ -59,12 +61,6 @@ public class Calculator extends JFrame{
 	}	
 	
 	public void createGui(){
-//		try { 
-//			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel"); 
-//			} 
-//			catch (Exception e) { 
-//			e.printStackTrace(); 
-//			} 
 		
 		frame = createJFrame("Calculator"); // Frame for everything	
 		JPanel outputPanel = this.createDisplayPanel(); 	// The display
@@ -83,7 +79,7 @@ public class Calculator extends JFrame{
 	public JFrame createJFrame(String title){
 		frame = new JFrame(title);
 		frame.setLayout(new BorderLayout());
-		frame.setMinimumSize(new Dimension(270,398));
+		frame.setMinimumSize(new Dimension(253,375));
 		frame.setResizable(false);	
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		return frame;		
@@ -95,12 +91,15 @@ public class Calculator extends JFrame{
 	 */
 	public JPanel createDisplayPanel(){
 		JPanel panel = this.createBorderLayoutPanel();
-		panel.setBorder(BorderFactory.createBevelBorder(4));
 		
 		display = new JTextField(9);
 		display.setFont(new Font("San Serif", Font.BOLD, 30));
 		displayText = chip.getOutput();   // The text that's to be displayed on the display
 		display.setText(this.displayText);
+		display.setEditable(false);
+		display.setBackground(cyan);
+		display.setHorizontalAlignment(JTextField.TRAILING);
+		display.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		panel.add(display);
 		
 		return panel;
@@ -140,9 +139,10 @@ public class Calculator extends JFrame{
 	public JPanel createMainButtonsPanel(){
 		JPanel panel = this.createBorderLayoutPanel();
 		JPanel operationsButtonsPanel2 = this.createOperationButtonPanelSQRT(); // for buttons "sqrt", "%", "1/x" and "="
-		panel.add(operationsButtonsPanel2, BorderLayout.EAST);
-	
-		JPanel otherButtonsPanel = this.createOtherButtonsPanel(); 
+		panel.add(operationsButtonsPanel2, BorderLayout.LINE_END);
+
+		JPanel otherButtonsPanel = this.createOtherButtonsGridPanel(); 
+
 		panel.add(otherButtonsPanel, BorderLayout.CENTER);
 		return panel;
 	}
@@ -154,11 +154,13 @@ public class Calculator extends JFrame{
 	 */
 	public JPanel createOperationButtonPanelSQRT(){
 		JPanel panel = this.createBorderLayoutPanel();
-		panel.setPreferredSize(new Dimension(50, 250));
+ 		panel.setPreferredSize(new Dimension(50, 250));
 		EqualsButton equals = this.createEqualsButtons("=");
 		panel.add(equals, BorderLayout.CENTER);
 		
-		JPanel subPanel = this.createBorderLayoutPanel(); // Houses the Ã, %, 1/x buttons
+		JPanel subPanel = new JPanel();
+		subPanel.setLayout(new GridLayout(3,1,1,1));
+		
 		panel.add(subPanel, BorderLayout.NORTH);
 		OperationsButton sqrt = this.createOperationButtons("Ã");
 		OperationsButton percent = this.createOperationButtons("%");
@@ -170,82 +172,25 @@ public class Calculator extends JFrame{
 		
 	}
 	
-	/**
-	 * all buttons other than clear and the right hand operations buttons
-	 * @return a panel containing memory buttons, number buttons and + - Ö x
-	 */
-	public JPanel createOtherButtonsPanel(){
-		JPanel panel = this.createBorderLayoutPanel();
-		JPanel memoryButtonsPanel = this.createMemoryButtonPanel();
-		panel.add(memoryButtonsPanel, BorderLayout.NORTH);
-		JPanel otherButtonsPanel = this.createNumberAndOperationsPanel();
-		panel.add(otherButtonsPanel, BorderLayout.CENTER);
-		return panel;
-	}
 	
 	/**
-	 * Create panel containing the MC, MR, M+ and M- buttons
-	 * @return panel containing the MC, MR, M+ and M- buttons
+	 * Creates the panel for all the rest of the buttons
+	 * @return panel with all the rest of the buttons
 	 */
-	public JPanel createMemoryButtonPanel(){
-		JPanel panel = this.createFlowLayoutPanel();
+	public JPanel createOtherButtonsGridPanel(){
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(5,4,1,1));
+		
 		MemoryButtons mc = this.createMemoryButtons("MC");
 		memReadButton = this.createMemoryButtons("MR"); // special as may change colour depending on state of chip.memoryUsed
 		MemoryButtons mPlus = this.createMemoryButtons("M+");
 		MemoryButtons mMinus = this.createMemoryButtons("M-");
-		panel.add(mc);
-		panel.add(memReadButton);
-		panel.add(mPlus);
-		panel.add(mMinus);
-		return panel;
-	}
-	
-	
-	/**
-	 * Creates the panel that includes all the numbers and Ö, x, - and +
-	 * @return panel with all the numbers and Ö, x, - and +
-	 */
-	public JPanel createNumberAndOperationsPanel(){
-		JPanel panel = this.createBorderLayoutPanel();
-		JPanel operationsPanelDivide = this.createOpetaionButtonPanelDIVIDE();
-		JPanel numbersPanel = this.createNumbersPanel();
-		panel.add(operationsPanelDivide, BorderLayout.EAST);
-		panel.add(numbersPanel, BorderLayout.CENTER);
-		return panel;
-	}
-	
-	/**
-	 * Creates the panel that includes Ö, x, - and +
-	 * @return panel with Ö, x, - and +
-	 */
-	public JPanel createOpetaionButtonPanelDIVIDE(){
-		JPanel panel = this.createBorderLayoutPanel();	
-
-		JPanel topPanel = this.createBorderLayoutPanel(); // Ö and x
+		
 		OperationsButton divide = this.createOperationButtons("Ö");
 		OperationsButton multiply = this.createOperationButtons("x");
-		topPanel.add(divide, BorderLayout.NORTH);
-		topPanel.add(multiply, BorderLayout.SOUTH);
-		panel.add(topPanel, BorderLayout.NORTH);
-		
-		JPanel bottomPanel = this.createBorderLayoutPanel(); // - and +	
 		OperationsButton minus = this.createOperationButtons("-");
 		OperationsButton plus = this.createOperationButtons("+");
 		
-		bottomPanel.add(minus, BorderLayout.NORTH);
-		bottomPanel.add(plus, BorderLayout.SOUTH);
-
-		panel.add(bottomPanel, BorderLayout.CENTER);
-		
-		return panel;
-	}
-	
-	/**
-	 * Creates the panel that includes all numbers
-	 * @return panel with numbers 0 - 9 + . + +/-
-	 */
-	public JPanel createNumbersPanel(){
-		JPanel numbersPanel = this.createFlowLayoutPanel();
 		NumberButtons seven = createNumberButtons("7");
 		NumberButtons eight = createNumberButtons("8");
 		NumberButtons nine = createNumberButtons("9");
@@ -257,43 +202,40 @@ public class Calculator extends JFrame{
 		NumberButtons three = createNumberButtons("3");
 		NumberButtons zero = createNumberButtons("0");
 		NumberButtons decimal = createNumberButtons(".");
-		NumberButtons plusMinus = createNumberButtons("+/-");
-		numbersPanel.add(seven);
-		numbersPanel.add(eight);
-		numbersPanel.add(nine);
-		numbersPanel.add(four);
-		numbersPanel.add(five);
-		numbersPanel.add(six);
-		numbersPanel.add(one);
-		numbersPanel.add(two);
-		numbersPanel.add(three);
-		numbersPanel.add(zero);
-		numbersPanel.add(decimal);
-		numbersPanel.add(plusMinus);		
-		return numbersPanel;
+		OperationsButton plusMinus = createOperationButtons("+/-");
+		
+		panel.add(mc);
+		panel.add(memReadButton);
+		panel.add(mPlus);
+		panel.add(mMinus);
+
+		panel.add(seven);
+		panel.add(eight);
+		panel.add(nine);
+		panel.add(divide);
+
+		panel.add(four);
+		panel.add(five);
+		panel.add(six);
+		panel.add(multiply);
+
+		panel.add(one);
+		panel.add(two);
+		panel.add(three);
+		panel.add(minus);
+
+		panel.add(zero);
+		panel.add(decimal);
+		panel.add(plusMinus);
+		panel.add(plus);
+	
+		return panel;
 	}
 	
-	/**
-	 * Sets the text on the clear button
+	/*******
+	 * Button creation methods
+	 * **********
 	 */
-	public void setClearButtonText(){
-		if(chip.getAllClear()){
-			clearButton.setText("AC");
-		} else {
-			clearButton.setText("C");
-		}
-	}
-	
-	/**
-	 * Sets the colour on the MemRead button
-	 */
-	public void setMemReadButtonColour(){
-		if(chip.getMemoryState()){
-			memReadButton.setNewBackground(Color.RED);
-		} else {
-			memReadButton.setNewBackground(Color.ORANGE);
-		}
-	}
 	
 	/**
 	 * Method to create NumberButtons (with ActionEvents)
@@ -351,6 +293,32 @@ public class Calculator extends JFrame{
 		return button;
 	}
 
+	/*******
+	 * Button alteration methods
+	 * **********
+	 */
+		
+	/**
+	 * Sets the text on the clear button
+	 */
+	public void setClearButtonText(){
+		if(chip.getAllClear()){
+			clearButton.setText("AC");
+		} else {
+			clearButton.setText("C");
+		}
+	}
+	
+	/**
+	 * Sets the colour on the MemRead button
+	 */
+	public void setMemReadButtonColour(){
+		if(chip.getMemoryState()){
+			memReadButton.setNewBackground(red);
+		} else {
+			memReadButton.setNewBackground(orange);
+		}
+	}
 
 	/*******
 	 * Panel creation methods
@@ -367,17 +335,6 @@ public class Calculator extends JFrame{
 		return panel;
 	}
 	
-	
-	
-	/**
-	 * Creates FlowLayout panel
-	 * @return a flow layout panel
-	 */
-	public JPanel createFlowLayoutPanel(){
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-		return panel;
-	}
 	
 	
 	/*******

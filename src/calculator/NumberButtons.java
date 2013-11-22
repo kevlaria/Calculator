@@ -1,3 +1,5 @@
+// Kevin Lee, Lin Hong
+
 package calculator;
 
 import java.awt.Color;
@@ -8,10 +10,11 @@ import javax.swing.JButton;
 
 public class NumberButtons extends CalculatorButton{
 
+	private Color blue = new Color(198,210,254);
 
 	public NumberButtons(String text, CalculatorChip chip) {
 		super(text, chip);
-		this.setBackground(Color.CYAN);
+		this.setBackground(blue);
 		this.setForeground(Color.BLACK);
 	}
 	
@@ -29,16 +32,11 @@ public class NumberButtons extends CalculatorButton{
 			if (command.equals(".")){
 				String output = chip.decimalPoint();
 				return output;
-			} else if (command.equals("+/-")){
-				String output = chip.changeSign();
-				return output;
-			} else {
+			}  else {
 				throw new RuntimeException("Unknown NumberButton input");
 			}
 			
-		}
-		
-		//TODO - handle +/- and .
+		}		
 	}
 	
 	

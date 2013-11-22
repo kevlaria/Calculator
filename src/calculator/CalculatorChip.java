@@ -1,7 +1,6 @@
-package calculator;
+// Kevin Lee, Lin Hong
 
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+package calculator;
 
 public class CalculatorChip {
 
@@ -10,8 +9,8 @@ public class CalculatorChip {
 	private String variableB;
 	private String operand;
 	private boolean allClear;
-	private static final int MAX_DIGITS = 14; // max digits to be displayed
-	private String lastButtonPressed; // "Number", "Operation", "Equals" or "Memory"
+	private static final int MAX_DIGITS = 13; // max digits to be displayed
+	private String lastButtonPressed; // "Number", "Operation", "Unary Operation" "Equals" or "Memory"
 	private String memory;
 	private boolean memoryUsed;
 	
@@ -33,34 +32,24 @@ public class CalculatorChip {
 	 */
 	
 	/**
+	 * Implements the clear button
 	 * Two scenarios:
 	 * - Clear
-	 * 		Clears out only content in variableA
-	 * 		Sets output display to 0
 	 * - All clear
-	 * 		Clears out content in variableA, variableB and operand
-	 * 		Sets output display to 0
-	 * @return
+	 * @return the current value of this.output
 	 */
 	public String clear(){
-		// TODO REMOVE
-		this.printStatusBefore();
-		
 		if (this.allClear){
 			this.clearAll();
 		} else {
 			this.clearSingle();
 		}
-		
-		// TODO REMOVE
-		this.printStatusAfter();
-		
 		return this.output;
 	}
 	
 	/**
 	 * On top of all the clearing performed in clearSingle
-	 * also clears out this.variableA and this.operand
+	 * also clears out this.variableB, this.operand and lastButtonPressed
 	 */
 	public void clearAll(){
 		this.clearSingle();
@@ -78,7 +67,7 @@ public class CalculatorChip {
 		this.output = "0";
 		this.variableA = "";
 		this.allClear = true;
-		if (this.lastButtonPressed.equals("Equals") || (this.lastButtonPressed.equals("UnaryOperation")) ){ 
+		if (this.lastButtonPressed.equals("Equals") || this.lastButtonPressed.equals("UnaryOperation")){ 
 			// If the last button pressed was "=", "sqrt", "%" or "1/x", clear out everything like an all clear
 			this.variableB = "";
 			this.operand = "";
@@ -86,29 +75,7 @@ public class CalculatorChip {
 	}
 	
 	
-	/**
-	 * Pre-process prior to entry of digits
-	 */
-	public void newEntryPreprocessing(){
-		if (this.output.equals("Error") || this.lastButtonPressed.equals("Equals") 
-				|| this.operand.equals("sqrt")){
-			this.clearAll();
-		}
-	
-		if (!this.lastButtonPressed.equals("Number")){
-			this.resetIfLastButtonPressedNotANumber();
-		}	
-	}
-	
-	
-	
-	/**
-	 * Resets if the last button pressed was not a number
-	 */
-	public void resetIfLastButtonPressedNotANumber(){
-		this.output = "0";
-		this.variableA = "";
-	}
+
 	
 	
 	/*******
@@ -122,6 +89,11 @@ public class CalculatorChip {
 	 * **********
 	 */
 	
+	
+	/**
+	 * Implements the add button
+	 * @return the current value of this.output
+	 */
 	public String add(){
 		if (!this.lastButtonPressed.equals("Equals")){
 			this.performBinaryCalculation("add");			
@@ -131,6 +103,10 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+	/**
+	 * Implements the subtract button
+	 * @return the current value of this.output
+	 */
 	public String subtract(){
 		if (!this.lastButtonPressed.equals("Equals")){
 			this.performBinaryCalculation("subtract");			
@@ -140,6 +116,10 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+	/**
+	 * Implements the multiply button
+	 * @return the current value of this.output
+	 */
 	public String multiply(){
 		if (!this.lastButtonPressed.equals("Equals")){
 			this.performBinaryCalculation("multiply");			
@@ -149,6 +129,10 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+	/**
+	 * Implements the divide button
+	 * @return the current value of this.output
+	 */
 	public String divide(){
 		if (!this.lastButtonPressed.equals("Equals")){
 			this.performBinaryCalculation("divide");					
@@ -158,50 +142,35 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+	
+	/**
+	 * Perform calculations for +, -, x, /
+	 * @param pressedOperand
+	 */
 	public void performBinaryCalculation(String pressedOperand){
 
-		//TODO REMOVE
-		this.printStatusBefore();
-		
-		//TODO - 3, +, 4, =, - should not continue the calculation
-		
 		if (this.variableA.equals("") && this.lastButtonPressed.equals("Operation")){
 			this.operand = pressedOperand;  // If I press '+' then '-' I merely change the operand, but do no calculations			
 		} else {
 				if (this.variableA.equals("") && this.variableB.equals("")){
-
-					System.out.println("emptyAemptyB");
-					
 					this.operateEmptyAEmptyB(pressedOperand);
 					
-					
 				} else if (!this.variableA.equals("") && this.variableB.equals("")){
-					System.out.println("AemptyB");
-					
 					this.operateAEmptyB(pressedOperand);
-
 					
 				
 				} else if (this.variableA.equals("") && !this.variableB.equals("")){
-					System.out.println("emptyAB");
-
 					
 					this.operateEmptyAB(pressedOperand);
-				} else if (!this.variableA.equals("") && !this.variableB.equals("")){
-					System.out.println("AB");
 
-					
+				} else if (!this.variableA.equals("") && !this.variableB.equals("")){
+									
 					this.operateAB(this.operand, pressedOperand);
 
-				} else {
+				} else { // this should not happen
 					throw new RuntimeException("Invalid operand");
-				}		
-					
+				}					
 		}
-		//TODO REMOVE
-		this.printStatusAfter();
-
-
 	}
 	
 
@@ -269,7 +238,7 @@ public class CalculatorChip {
 			} catch (RuntimeException exception){
 				this.output = "Error";
 			}
-		} else {
+		} else { //This shouldn't happen
 			throw new RuntimeException("Invalid operand");
 		}		
 	}
@@ -339,39 +308,109 @@ public class CalculatorChip {
 		} 
 	}
 	
-//	public String trimSignificantPlaces(String number){
-//		if (number.length() > MAX_DIGITS){
-//			number = number.substring(0, MAX_DIGITS);
-//		}
-//		return number;
-//	}
 
 	/*******
-	 * Unary operations methods
+	 * Unary operations methods ('sqrt', '1/x', '%')
 	 * **********
 	 */
 	
+	/**
+	 * Implements the square root button
+	 * @return the current value of this.output
+	 */
 	public String sqrt(){
-		
-		//TODO REMOVE
-		this.printStatusBefore();	
-		
-		this.performUniaryCalculations("sqrt");
-		
-		//TODO REMOVE
-		this.printStatusAfter();
-		
+		this.preUnaryCalculations("sqrt");
 		return this.output;
 	}
 	
+	/**
+	 * Implements the 1/x button
+	 * @return the current value of this.output
+	 */
+	public String invert(){
+		this.preUnaryCalculations("invert");				
+		return this.output;		
+	}
 	
+	/**
+	 * Implements the % button
+	 * @return the current value of this.output
+	 */
+	String percent(){
+		this.preUnaryCalculations("percent");		
+		return this.output;		
+	}
+
 	
+	/**
+	 * Conducts preparatory steps for unary calculations based on the last button pressed and current operand
+	 * @param function
+	 */
+	public void preUnaryCalculations(String function){
+		if (this.lastButtonPressed.equals("Operation")){
+			// eg. 5, x, % - varA is empty hence need to copy varB to varA
+			this.variableA = this.variableB;
+			this.performUnaryCalculation(function);
+			
+		} else if (this.lastButtonPressed.equals("Equals")){
+			// eg. 8, x, 2, = - answer is in varB so need to copy to varA
+			// After computation, need to update this.operand + copy answer to varB
+			this.variableA = this.variableB;
+			this.performUnaryCalculation(function);
+			this.operand = function;
+			this.variableB = this.variableA;
+			
+		} else {		// lastButtonPressed = "Memory", "Number" or "Unary Operations"
+			
+			if (this.operand.equals("add") || this.operand.equals("subtract") 
+					|| this.operand.equals("multiply") || this.operand.equals("divide")){
+				// don't change operand
+				this.performUnaryCalculation(function);
+			} else {
+				this.performUnaryCalculation(function);
+				this.operand = function;
+			}	
+		}
+	}
+	
+	/**
+	 * Perform unary calculations (sqrt, 1/x, %)
+	 * Performs calculation on variableA
+	 * Returns answer to variableA
+	 * Retains original operand
+	 * @param function
+	 */	
+	public void performUnaryCalculation(String function){
+		String answer = "";
+		try {
+			if (function.equals("sqrt")){
+				answer = this.sqrt(this.variableA);					
+			} else if (function.equals("invert")){
+				answer = this.invert(this.variableA);
+			} else if (function.equals("percent")){	
+				if (this.variableB.equals("")){
+					this.variableB = "1";
+					answer = this.percent(this.variableA, this.variableB);
+					this.variableB = "";  // reset variableB
+				} else {
+					answer = this.percent(this.variableA, this.variableB);					
+				}
+			}
+			this.variableA = answer;
+			this.output = answer;				
+		} catch (RuntimeException exception){
+			this.output = "Error";
+		}
+		
+		this.allClear = false;
+		this.lastButtonPressed = "UnaryOperation";
+	}
 	
 	
 	/**
 	 * Calculates the square root of a number
 	 * @param a
-	 * @return
+	 * @return the result of the calculation
 	 */
 	public String sqrt(String a){
 		
@@ -382,31 +421,15 @@ public class CalculatorChip {
 		if (resultString.equals("NaN")){
 			throw new RuntimeException("Error");
 		}
-		
 		resultString = this.trimInput(resultString);
 		return resultString;
-
 	}
 	
-	
-	public String invert(){
-		//TODO REMOVE
-		this.printStatusBefore();	
-
-		this.performUniaryCalculations("invert");		
-		
-		//TODO REMOVE
-		this.printStatusAfter();
-	
-		return this.output;		
-	}
-	
-
 	
 	/**
 	 * calculates the inverse of a number
 	 * @param a
-	 * @return
+	 * @return the result of the calculation
 	 */
 	public String invert(String a){
 	
@@ -422,23 +445,13 @@ public class CalculatorChip {
 	
 	}
 	
-	String percent(){
-		//TODO REMOVE
-		this.printStatusBefore();	
-
-		this.performUniaryCalculations("percent");		
-		
-		//TODO REMOVE
-		this.printStatusAfter();
 	
-		return this.output;		
-
-	}
 	
 	/**
 	 * Converts number into a percentage
 	 * @param a
-	 * @return
+	 * @param b
+	 * @return the result of the calculation
 	 */
 	public String percent(String a, String b){
 	
@@ -451,71 +464,8 @@ public class CalculatorChip {
 		return resultString;
 	
 	}
-	
-	
-	public void performUniaryCalculations(String function){
-		String answer = "";
-		if (this.lastButtonPressed.equals("Equals")){
-			// 1, x, 4, =, sqrt, 
-			this.operand = function;
-			try {
-				
-				if (function.equals("sqrt")){
-					answer = this.sqrt(this.variableB);					
-				} else if (function.equals("invert")){
-					answer = this.invert(this.variableB);
-				} else if (function.equals("percent")){
-					answer = this.percent(this.variableB, "1");
-				}
-				
-				this.variableA = answer;
-				this.output = answer;				
-			} catch (RuntimeException exception){
-				this.output = "Error";
-			}
+
 			
-		} else if (this.operand.equals("add") || this.operand.equals("subtract") || 
-				this.operand.equals("multiply") || this.operand.equals("divide")){
-			// 1, x, 4, sqrt
-			
-			try {
-				if (function.equals("sqrt")){
-					answer = this.sqrt(this.variableA);					
-				} else if (function.equals("invert")){
-					answer = this.invert(this.variableA);
-				} else if (function.equals("percent")){
-					answer = this.percent(this.variableA, this.variableB);
-				}
-				this.variableA = answer;
-				this.output = answer;				
-			} catch (RuntimeException exception){
-				this.output = "Error";
-			}
-			
-		} else {
-			
-			try {
-				if (function.equals("sqrt")){
-					answer = this.sqrt(this.variableA);					
-				} else if (function.equals("invert")){
-					answer = this.invert(this.variableA);
-				}	else if (function.equals("percent")){
-					answer = this.percent(this.variableA, "1");
-				}
-				this.operand = function;			
-				this.variableA = answer;
-				this.output = answer;
-				
-			} catch (RuntimeException exception){
-				this.output = "Error";
-			}
-			
-		}
-		
-		this.allClear = false;
-		this.lastButtonPressed = "UnaryOperation";
-	}
-	
 
 	/*******
 	 * Equals operations methods
@@ -523,111 +473,162 @@ public class CalculatorChip {
 	 */
 	
 	/**
-	 * 4 possible states:
-	 * 1. VariableA & VariableB are both empty
-	 * 2. VariableA is empty, VariableB is not empty
-	 * 3. VariableA is not empty, VariableB is empty <-- unlikely
-	 * 4. VariableA and VariableB are both not empty
-	 * @return
+	 * Implements the enter key. Functionality depends on what the last button that was pressed 
+	 * @return the current value of this.output
 	 */
 	public String equals(){
 		
-		//TODO REMOVE
-		this.printStatusBefore();
-		
-		if (this.lastButtonPressed.equals("UnaryOperation")){
-			this.lastButtonPressed = "Equals";
-			try {
-				if (this.variableB.equals("")){
-					this.variableB = this.variableA;
-				}
-				String answer = this.sqrt(this.variableB);
-				this.variableB = answer;
-				this.output = answer;				
-				
-				
-				
-//				if (this.variableB.equals("")){
-//					this.variableB = this.variableA;
-//					String answer = this.sqrt(this.variableB);
-//					this.variableB = answer;
-//					this.output = answer;				
-//				} else {
-//					String answer = this.sqrt(this.variableA);
-//					this.variableA = answer;
-//					this.output = answer;									
-//					
-//				}
-				
-			} catch (RuntimeException exception){
-				this.output = "Error";
-				return this.output;
-			}
-			
-		} 
-		
-		else if (this.lastButtonPressed.equals("Number")){
-			
-			this.lastButtonPressed = "Equals";
-
-			
-			if (!this.variableB.equals("") && !this.variableB.equals("")){
-				// eg 3, +, 5, =
-				this.performBinaryCalculation(this.operand);
-				this.variableB = this.output;
-			} else if (!this.variableA.equals("") && this.variableB.equals("") && !this.operand.equals("")){
-				// eg -, 3, =
-				this.variableB = "0";
-				this.performBinaryCalculation(this.operand);
-				this.variableB = this.output;		
-			} else {
-				// Do nothing
-			}
-		} 
-		
-		else if (this.lastButtonPressed.equals("Operation") ||  this.lastButtonPressed.equals("UnaryOperation") || this.lastButtonPressed.equals("Equals")){
-			
-			this.lastButtonPressed = "Equals";
-			
-			if (this.variableA.equals("") && !this.variableB.equals("")){
-				// eg. 2, -, =		varA = ""
-				this.variableA = this.variableB; // varA = 2, varB = 2
-
-				this.performBinaryCalculation(this.operand);
-				// NB varA is left as 2
-
-
-				
-			} else if (!this.variableA.equals("") && !this.variableB.equals("")){
-				
-				if (this.lastButtonPressed.equals("Operation")){
-					// eg 2, -, =, =
-					
-					this.performBinaryCalculation(this.operand);
-					
-				} else {
-					this.performUniaryCalculations(this.operand);
-				}
-								
-			} else {
-				// Do nothing
-			}
-		}	
-
-
-		//TODO REMOVE
-		this.printStatusAfter();
-
-		
-
+		if (this.getLastButtonPressed().equals("Number")){
+			this.equalsNumber();
+		} else if (this.getLastButtonPressed().equals("Operation")){
+			this.equalsOperation();
+		} else if (this.getLastButtonPressed().equals("UnaryOperation")){
+			this.equalsUnaryOperation();
+		} else if (this.getLastButtonPressed().equals("Equals")){
+			this.equalsEquals();
+		} else {
+			// Do nothing
+		}
+		this.lastButtonPressed = "Equals";
 		return this.output;
 	}
+	
+	/**
+	 * Performs the equals function if lastButtonPressed = "Number"
+	 */
+	public void equalsNumber(){
+		if (this.operand.equals("add") || this.operand.equals("subtract") 
+				|| this.operand.equals("multiply") || this.operand.equals("divide")){
+			if (!this.variableA.equals("") && !this.variableB.equals("")){
+				// eg. 9 x 8
+				this.performBinaryCalculation(this.operand);
+			} else if (!this.variableA.equals("") && this.variableB.equals("")){
+				// eg. -2
+				this.variableB = "0";
+				this.performBinaryCalculation(this.operand);
+			} else {
+				// shouldn't happen
+				throw new RuntimeException("Invalid equals function");
+			}		
+		} else {
+			// eg. 9, 
+			// do nothing
+		}
+	}
+	
+	/**
+	 * Performs the equals function if lastButtonPressed = "Operation" (+, -, x, /)
+	 */
+	public void equalsOperation(){
+		if (!this.variableA.equals("") && !this.variableB.equals("")){
+			// eg. 9 x 8 -
+			this.variableA = this.variableB;
+			this.performBinaryCalculation(this.operand);
+		} else if (this.variableA.equals("") && !this.variableB.equals("")){
+			// eg. 3 - 
+			this.variableA = this.variableB;
+			this.performBinaryCalculation(this.operand);
+		} else if (this.variableA.equals("") && this.variableB.equals("")){
+			// +
+			// Do nothing
+		}	
+		else {
+			// shouldn't happen
+			throw new RuntimeException("Invalid equals function");
+		}			
+	}
+	
+	/**
+	 * Performs the equals function if lastButtonPressed = "UnaryOperation" (%, sqrt, 1/x)
+	 */
+	public void equalsUnaryOperation(){
+		if (!this.variableA.equals("") && !this.variableB.equals("")){
+			
+			if (this.operand.equals("add") || this.operand.equals("subtract") 
+					|| this.operand.equals("multiply") || this.operand.equals("divide")){
+				// eg. 8, x, 9, sqrt
+				this.performBinaryCalculation(this.operand);
+			} else {
+				// eg. 9, x, 9, =, sqrt, = 
+				this.performUnaryCalculation(this.operand);
+			}
+
+		} else if (!this.variableA.equals("") && this.variableB.equals("")){
+			// eg. 3, sqrt 
+			this.performUnaryCalculation(this.operand);
+		} else if (this.variableA.equals("") && this.variableB.equals("")){
+			// sqrt
+			// Do nothing
+		}	
+		else {
+			// shouldn't happen
+			throw new RuntimeException("Invalid equals function");
+		}					
+	}
+
+	/**
+	 * Performs the equals function if lastButtonPressed = "Equals" (%, sqrt, 1/x)
+	 */
+	public void equalsEquals(){
+		if (!this.variableA.equals("") && !this.variableB.equals("")){
+			
+			if (this.operand.equals("add") || this.operand.equals("subtract") 
+					|| this.operand.equals("multiply") || this.operand.equals("divide")){
+				// eg. 8, x, 9, =
+				this.performBinaryCalculation(this.operand);
+			} else {
+				// eg. 81, sqrt, = 
+				this.performUnaryCalculation(this.operand);
+			}
+
+		} else if (this.variableA.equals("") && !this.variableB.equals("")){
+			// 8, x, 8, =, clear
+			this.variableA = this.variableB;
+			if (this.operand.equals("add") || this.operand.equals("subtract") 
+					|| this.operand.equals("multiply") || this.operand.equals("divide")){
+				// eg. 8, x, 9, =
+				this.performBinaryCalculation(this.operand);
+			} else {
+				// eg. 81, sqrt, = 
+				this.performUnaryCalculation(this.operand);
+			}
+			
+		} else if (!this.variableA.equals("") && this.variableB.equals("")){
+			if (this.operand.equals("add") || this.operand.equals("subtract") 
+					|| this.operand.equals("multiply") || this.operand.equals("divide")){
+				// eg. 8, x, 9, =
+				this.performBinaryCalculation(this.operand);
+			} else if (this.operand.equals("invert") || this.operand.equals("sqrt") 
+					|| this.operand.equals("percent")){
+				// eg. 256, sqrt, =, 
+				this.performUnaryCalculation(this.operand);
+			} else {
+				// eg. 8, =
+				// Do nothing
+				
+			}
+			
+		} else if (this.variableA.equals("") && this.variableB.equals("")){
+			// 8, =
+			// Do nothing	
+		} else {
+			// Shouldn't happen
+			throw new RuntimeException("Invalid equals function");
+		}
+
+	}
+	
+	
 	
 	/*******
 	 * MemoryButton methods: MC, MR, M+, M-
 	 * **********
 	 */
 	
+	/**
+	 * Clears the memory
+	 * @return the current state of this.output
+	 */
 	public String memClear(){
 		this.memory = "0";
 		this.memoryUsed = false;
@@ -635,6 +636,11 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+
+	/**
+	 * Returns the value in the memory
+	 * @return the current state of this.output
+	 */
 	public String memRead(){
 		this.output = this.memory;
 		this.variableA = this.memory;
@@ -642,6 +648,10 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+	/**
+	 * Adds whatever has been input to the number in memory, and stores it.
+	 * @return the current state of this.output
+	 */
 	public String memPlus(){
 		this.memoryUsed = true;
 		if (this.lastButtonPressed.equals("Equals")){
@@ -656,12 +666,20 @@ public class CalculatorChip {
 		return this.output;
 	}
 	
+	/**
+	 * Subtracts whatever has been input from the number in memory, and stores it.
+	 * @return the current state of this.output
+	 */
+
 	public String memMinus(){
 		this.memoryUsed = true;
-		if (this.lastButtonPressed.equals("Equals")){			
-			this.memory = this.subtract(this.memory,this.variableB);	// Equals stores results in variableB		
+
+		if (this.lastButtonPressed.equals("Equals")){
+			this.memory = this.subtract(this.memory,this.variableB);	// Equals stores results in variableB	
 		} else {
+			if (this.variableA.equals("")){this.variableA = "0";}
 			this.memory = this.subtract(this.memory,this.variableA);
+			this.variableA = "";
 		}
 		this.lastButtonPressed = "Memory";
 		return this.output;
@@ -686,18 +704,10 @@ public class CalculatorChip {
 		this.allClear = false;
 		
 		this.newEntryPreprocessing();
-		
-		//TODO REMOVE
-		this.printStatusBefore();
-		
 		if (digit >= 0 && digit <= 9){
 			if (digit == 0 && this.output.equals("0")){	
 				this.lastButtonPressed = "Number";
 				this.variableA = "0";
-
-				//TODO REMOVE
-				this.printStatusAfter();
-				
 				return this.output; // doesn't do anything
 			} else if (this.output.equals("0")){
 				// only update output and variable if the digit pressed is not zero and the this.output isn't "0"
@@ -705,21 +715,12 @@ public class CalculatorChip {
 				this.variableA = stringDigit;
 				this.output = stringDigit;
 				this.lastButtonPressed = "Number";
-				
-				//TODO REMOVE
-				this.printStatusAfter();
-
-				
 				return this.output;				
 			} else {
 				String stringDigit = Integer.toString(digit);
 				variableA = variableA + stringDigit;
 				this.output = this.output + stringDigit;
 				this.lastButtonPressed = "Number";
-	
-				//TODO REMOVE
-				this.printStatusAfter();
-				
 				return this.output;					
 			}			
 		} else {
@@ -735,8 +736,7 @@ public class CalculatorChip {
 	public String decimalPoint(){
 		this.allClear = false;
 		this.newEntryPreprocessing();
-
-		
+	
 		if (!this.output.contains(".")){
 			this.output = this.output + ".";
 			this.lastButtonPressed = "Number";
@@ -785,6 +785,7 @@ public class CalculatorChip {
 	
 	/**
 	 * Removes trailing 0's and decimal points (eg 4., 4.00)
+	 * Trims result to number of digits set in constant MAX_DIGITS
 	 * @param input
 	 * @return a string of numbers without trailing decimals and 0's
 	 */
@@ -811,6 +812,27 @@ public class CalculatorChip {
 		return input;
 	}
 	
+	/**
+	 * Pre-process prior to entry of digits
+	 */
+	public void newEntryPreprocessing(){
+		if (this.output.equals("Error") || this.lastButtonPressed.equals("Equals") 
+				|| this.operand.equals("sqrt")){
+			this.clearAll();
+		}
+	
+		if (!this.lastButtonPressed.equals("Number")){
+			this.resetIfLastButtonPressedNotANumber();
+		}	
+	}
+	
+	/**
+	 * Resets if the last button pressed was not a number
+	 */
+	public void resetIfLastButtonPressedNotANumber(){
+		this.output = "0";
+		this.variableA = "";
+	}
 	
 	
 	/*******
@@ -855,25 +877,4 @@ public class CalculatorChip {
 	public void setVariableB(String text){
 		this.variableB = text;
 	}
-	
-	//TODO REMOVE THESE METHODS
-	public void printStatusBefore(){
-		System.out.println(this.variableA + "<-- variableA before operation");
-		System.out.println(this.variableB + "<-- variableB before operation");
-		System.out.println(this.lastButtonPressed + "<-- lastButtonPressed before operation");
-		System.out.println(this.operand + "<-- operand before operation");
-		System.out.println(this.output + "<-- output before operation");
-		System.out.println("");
-	}
-	
-	public void printStatusAfter(){
-		System.out.println(this.variableA + "<-- variableA after operation");
-		System.out.println(this.variableB + "<-- variableB after operation");
-		System.out.println(this.lastButtonPressed + "<-- lastButtonPressed after operation");
-		System.out.println(this.operand + "<-- operand after operation");
-		System.out.println(this.output + "<-- output after operation");
-		System.out.println("");
-
-	}
-	
 }

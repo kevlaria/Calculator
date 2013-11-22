@@ -1,3 +1,5 @@
+// Kevin Lee, Lin Hong
+
 package calculator;
 
 import java.awt.Color;
@@ -5,10 +7,12 @@ import java.awt.event.ActionEvent;
 
 public class OperationsButton extends CalculatorButton{
 
+	private Color green = new Color(103,254,118);
+	
 	public OperationsButton(String text, CalculatorChip calculatorChip) {
 		super(text, calculatorChip);
 
-		this.setBackground(Color.GREEN);
+		this.setBackground(green);
 		this.setForeground(Color.BLACK);
 	}
 
@@ -32,6 +36,9 @@ public class OperationsButton extends CalculatorButton{
 			return output;
 		} else if (command.equals("1/x")){
 			String output = chip.invert();
+			return output;
+		} else if (command.equals("+/-")){
+			String output = chip.changeSign();
 			return output;
 		} else if (command.equals("%")){
 			String output = chip.percent();

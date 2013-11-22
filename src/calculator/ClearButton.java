@@ -1,3 +1,4 @@
+// Kevin Lee, Lin Hong
 package calculator;
 
 import java.awt.Color;
@@ -5,10 +6,12 @@ import java.awt.event.ActionEvent;
 
 public class ClearButton extends CalculatorButton{
 
+	private Color red = new Color(245,116,62);
+	
 	public ClearButton(String text, CalculatorChip calculatorChip) {
 		super(text, calculatorChip);
 
-		this.setBackground(Color.MAGENTA);
+		this.setBackground(red);
 		this.setForeground(Color.BLACK);
 	}
 

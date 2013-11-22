@@ -1,3 +1,5 @@
+// Kevin Lee, Lin Hong
+
 package calculator;
 
 import java.awt.Color;
@@ -6,13 +8,15 @@ import java.awt.event.ActionEvent;
 
 public class EqualsButton extends CalculatorButton{
 
+	private Color green = new Color(103,254,118);
+	
 	public EqualsButton(String text, CalculatorChip calculatorChip) {
 		super(text, calculatorChip);
 
-		this.setBackground(Color.MAGENTA);
+		this.setBackground(green);
 		this.setForeground(Color.BLACK);
 		
-		this.setPreferredSize(new Dimension(60, 120));
+		this.setMaximumSize(new Dimension(10, 20));
 
 	}
 
