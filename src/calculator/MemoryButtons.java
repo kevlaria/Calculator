@@ -1,4 +1,3 @@
-// Kevin Lee, Lin Hong
 package calculator;
 
 import java.awt.Color;

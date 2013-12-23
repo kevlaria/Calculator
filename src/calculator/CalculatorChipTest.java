@@ -1,5 +1,3 @@
-// Kevin Lee, Lin Hong
-
 package calculator;
 
 import static org.junit.Assert.*;

@@ -1,24 +1,3 @@
-// Kevin Lee, Lin Hong
-
-/***
-* Container hierarchy (by method name):
- * 
- * createJFrame
- * 		- createDisplayPanel
- * 		- createMainBodyPanel
- * 			- createClearButtonPanel
- * 				- CLEAR button
- * 			- createMainButtonsPanel
- * 				- createOperationButtonPanelSQRT
- * 					- SQRT, %, 1/x, = buttons
- * 				- createOtherButtonsGridPanel
- * 						- MC, MR, M+, M- buttons
- * 						- Ö, x, -, + buttons
- * 						- 0-9, '.' and '+/-' buttons
- * 
- */
-
-
 package calculator;
 
 import java.awt.BorderLayout;
